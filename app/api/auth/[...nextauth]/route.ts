@@ -6,6 +6,8 @@ import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
 
+
+
 export const authOptions = {
   providers: [
     CredentialsProvider({
@@ -35,11 +37,9 @@ export const authOptions = {
     signIn: "/auth/login",
   },
   session: {
-    strategy: "jwt",
+    strategy: "jwt" as const, // ✅ this fixes the TS error
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
 
-const handler = NextAuth(authOptions);
 
-export { handler as GET, handler as POST }; // ✅ Necessary for NextAuth App Router
