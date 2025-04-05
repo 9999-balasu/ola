@@ -7,7 +7,7 @@ import User from "@/models/User";
 import bcrypt from "bcryptjs";
 import type { NextAuthOptions } from "next-auth";
 
-export const authOptions: NextAuthOptions = {
+const handler = NextAuth({
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -32,11 +32,9 @@ export const authOptions: NextAuthOptions = {
     signIn: "/auth/login",
   },
   session: {
-    strategy: "jwt", // ✅ Use only "jwt" or "database"
+    strategy: "jwt", // ✅ Must be exactly "jwt" or "database"
   },
   secret: process.env.NEXTAUTH_SECRET,
-};
-
-const handler = NextAuth(authOptions);
+});
 
 export { handler as GET, handler as POST };
