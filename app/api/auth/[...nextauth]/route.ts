@@ -1,19 +1,18 @@
+// app/api/auth/[...nextauth]/route.ts
+
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
 
-
-
-
-const handler = NextAuth({
+export const authOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: {},
-        password: {},
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         await connectDB();
@@ -24,7 +23,11 @@ const handler = NextAuth({
         const isValid = await bcrypt.compare(credentials!.password, user.password);
         if (!isValid) throw new Error("Invalid credentials");
 
-        return { id: user._id, name: user.name, email: user.email };
+        return {
+          id: user._id.toString(),
+          name: user.name,
+          email: user.email,
+        };
       },
     }),
   ],
@@ -35,6 +38,8 @@ const handler = NextAuth({
     strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
-});
+};
 
-export { handler as GET, handler as POST };
+const handler = NextAuth(authOptions);
+
+export { handler as GET, handler as POST }; // ✅ Necessary for NextAuth App Router
