@@ -1,3 +1,5 @@
+
+
 'use client';
 
 import Link from 'next/link';
@@ -8,12 +10,17 @@ export default function Navbar() {
 
   return (
     <nav className="bg-white shadow-md py-4 px-6 flex justify-between items-center">
-      <Link href="/" className="text-xl font-bold text-green-600">Ola </Link>
+      <Link href="/" className="text-xl font-bold text-green-600">Ola</Link>
+      <Link href="/past-rides" className="hover:text-blue-600 text-gray-950">Past Rides</Link>
 
       <div className="flex items-center gap-4">
         {session ? (
           <>
             <span className="text-gray-700">Hi, {session.user?.name}</span>
+            {/* Display Driver Dashboard link only for drivers */}
+            {session.user?.role === 'driver' && (
+              <Link href="/driver/dashboard" className="text-blue-600 hover:underline text-green-950">Driver Dashboard</Link>
+            )}
             <Link href="/dashboard" className="text-blue-600 hover:underline">Dashboard</Link>
             <button
               onClick={() => signOut()}

@@ -46,7 +46,7 @@ export default function RideCard({
         ) : (
           <button
             onClick={onBook}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl"
+            className="bg-blue-600 hover:bg-blue-700 text-amber-700 px-4 py-2 rounded-xl"
           >
             Book Ride
           </button>
