@@ -1,4 +1,4 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+/*import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
@@ -40,4 +40,15 @@ export const authOptions: NextAuthOptions = {
 
 const handler = NextAuth(authOptions);
 
+export { handler as GET, handler as POST };*/
+
+
+
+
+import NextAuth from "next-auth";
+import { authOptions } from "./authOptions";
+
+const handler = NextAuth(authOptions);
+
 export { handler as GET, handler as POST };
+
