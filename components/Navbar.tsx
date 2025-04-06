@@ -19,7 +19,7 @@ export default function Navbar() {
             <span className="text-gray-700">Hi, {session.user?.name}</span>
             {/* Display Driver Dashboard link only for drivers */}
             {session.user?.role === 'driver' && (
-              <Link href="/driver/dashboard" className="text-blue-600 hover:underline text-green-950">Driver Dashboard</Link>
+              <Link href="/driver/dashboard" className=" hover:underline text-green-950">Driver Dashboard</Link>
             )}
             <Link href="/dashboard" className="text-blue-600 hover:underline">Dashboard</Link>
             <button
