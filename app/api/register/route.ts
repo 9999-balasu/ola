@@ -1,34 +1,38 @@
-import { NextResponse } from 'next/server';
-import { connectDB } from '@/lib/mongodb';
-import User from '@/models/User';
+
+
+
+
+
+
+
+// app/api/register/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import connectToDB from '@/utils/db';
+import { User } from '@/models/User';
 import bcrypt from 'bcryptjs';
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
+    await connectToDB();
     const { name, email, password } = await req.json();
 
-    // Validate fields
     if (!name || !email || !password) {
-      return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
+      return NextResponse.json({ message: 'All fields are required' }, { status: 400 });
     }
 
-    await connectDB();
-
-    // Check for existing user
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return NextResponse.json({ message: 'User already exists' }, { status: 409 });
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return NextResponse.json({ message: 'User already exists' }, { status: 400 });
     }
 
-    // Hash password
-    const hashed = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
-    await User.create({ name, email, password: hashed });
+    const newUser = new User({ name, email, password: hashedPassword });
+    await newUser.save();
 
-    return NextResponse.json({ message: 'User created successfully' }, { status: 201 });
+    return NextResponse.json({ message: 'User registered successfully' }, { status: 201 });
   } catch (error) {
-    console.error('Register Error:', error);
+    console.error('Registration error:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }

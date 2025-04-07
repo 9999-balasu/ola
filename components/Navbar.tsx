@@ -1,41 +1,105 @@
-
-
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
-import { useSession, signOut } from 'next-auth/react';
 
-export default function Navbar() {
-  const { data: session } = useSession();
+const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleNavbar = () => {
+    setIsOpen(!isOpen);
+  };
 
   return (
-    <nav className="bg-white shadow-md py-4 px-6 flex justify-between items-center">
-      <Link href="/" className="text-xl font-bold text-green-600">Ola</Link>
-      <Link href="/past-rides" className="hover:text-blue-600 text-gray-950">Past Rides</Link>
-
-      <div className="flex items-center gap-4">
-        {session ? (
-          <>
-            <span className="text-gray-700">Hi, {session.user?.name}</span>
-            {/* Display Driver Dashboard link only for drivers */}
-            {session.user?.role === 'driver' && (
-              <Link href="/driver/dashboard" className=" hover:underline text-green-950">Driver Dashboard</Link>
-            )}
-            <Link href="/dashboard" className="text-blue-600 hover:underline">Dashboard</Link>
+    <nav className="bg-white shadow-md">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          <div className="flex">
+            {/* Logo or Brand Name */}
+            <div className="flex-shrink-0 flex items-center">
+              <Link href="/">
+                <span className="text-xl font-bold text-gray-900">YourBrand</span>
+              </Link>
+            </div>
+            {/* Desktop Menu */}
+            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+              <Link href="/dashboard">
+                <span className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900 hover:text-blue-500">
+                  Dashboard
+                </span>
+              </Link>
+              <Link href="/login">
+                <span className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900 hover:text-blue-500">
+                  Login
+                </span>
+              </Link>
+              <Link href="/register">
+                <span className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900 hover:text-blue-500">
+                  Register
+                </span>
+              </Link>
+            </div>
+          </div>
+          {/* Mobile Menu Button */}
+          <div className="-mr-2 flex items-center sm:hidden">
             <button
-              onClick={() => signOut()}
-              className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600"
+              onClick={toggleNavbar}
+              className="bg-white inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
+              aria-expanded={isOpen}
             >
-              Logout
+              <span className="sr-only">Open main menu</span>
+              {/* Icon when menu is closed. */}
+              {!isOpen ? (
+                <svg
+                  className="block h-6 w-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              ) : (
+                <svg
+                  className="block h-6 w-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              )}
             </button>
-          </>
-        ) : (
-          <>
-            <Link href="/auth/login" className="text-gray-700 hover:underline">Login</Link>
-            <Link href="/auth/register" className="text-gray-700 hover:underline">Register</Link>
-          </>
-        )}
+          </div>
+        </div>
       </div>
+      {/* Mobile Menu */}
+      {isOpen && (
+        <div className="sm:hidden">
+          <div className="pt-2 pb-3 space-y-1">
+            <Link href="/dashboard">
+              <span className="block pl-3 pr-4 py-2 text-base font-medium text-gray-900 hover:text-blue-500">
+                Dashboard
+              </span>
+            </Link>
+            <Link href="/login">
+              <span className="block pl-3 pr-4 py-2 text-base font-medium text-gray-900 hover:text-blue-500">
+                Login
+              </span>
+            </Link>
+            <Link href="/register">
+              <span className="block pl-3 pr-4 py-2 text-base font-medium text-gray-900 hover:text-blue-500">
+                Register
+              </span>
+            </Link>
+          </div>
+        </div>
+      )}
     </nav>
   );
-}
+};
+
+export default Navbar;

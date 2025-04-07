@@ -1,33 +1,38 @@
-import { NextResponse } from 'next/server';
-import { connectDB } from '@/lib/mongodb';
-import User from '@/models/User';
-import bcrypt from 'bcryptjs';
+  
 
-export async function POST(req: Request) {
-  try {
-    const { email, password } = await req.json();
-    await connectDB();
 
-    const user = await User.findOne({ email });
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
-    }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
-    }
 
-    // You can return user data or a JWT here (if using manual auth)
-    return NextResponse.json({
-      message: 'Login successful',
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-      },
-    });
-  } catch (error) {
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+
+
+import { NextRequest, NextResponse } from 'next/server';
+import { compare } from 'bcryptjs';
+import { sign } from 'jsonwebtoken';
+import  connectToDB  from '@/utils/db';
+
+import { User } from '@/models/User';
+export async function POST(req: NextRequest) {
+  const { email, password } = await req.json();
+
+  await connectToDB();
+  const user = await User.findOne({ email });
+
+  if (!user || !(await compare(password, user.password))) {
+    return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
   }
+
+  const token = sign({ userId: user._id, name: user.name, email: user.email }, process.env.JWT_SECRET!, {
+    expiresIn: '1d',
+  });
+
+  const res = NextResponse.json({ message: 'Login successful', user: { name: user.name, email: user.email } });
+
+  res.cookies.set('token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+  });
+
+  return res;
 }
